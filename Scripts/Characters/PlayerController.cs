@@ -11,6 +11,12 @@ public partial class PlayerController : CharacterBody3D
 	[Export]
 	public float RespawnHeight { get; set; } = -10.0f;
 
+	[Export]
+	public float RotationSpeed { get; set; } = 10.0f;
+
+	[Export]
+	public Camera3D Camera { get; set; }
+
 	private Vector3 _spawnPosition;
 
 	public override void _Ready()
@@ -27,11 +33,43 @@ public partial class PlayerController : CharacterBody3D
             "move_backward"
 		);
 
-		Vector3 direction = new Vector3(
-			input.X,
-			0.0f,
-			input.Y
-		).Normalized();
+		Vector3 direction = Vector3.Zero;
+
+		if (Camera != null && input != Vector2.Zero)
+		{
+			Vector3 cameraForward = -Camera.GlobalTransform.Basis.Z;
+			Vector3 cameraRight = Camera.GlobalTransform.Basis.X;
+
+			cameraForward.Y = 0.0f;
+			cameraRight.Y = 0.0f;
+
+			cameraForward = cameraForward.Normalized();
+			cameraRight = cameraRight.Normalized();
+
+			direction =
+				cameraRight * input.X +
+				cameraForward * -input.Y;
+
+			direction = direction.Normalized();
+		}
+
+		if (direction != Vector3.Zero)
+		{
+			float targetAngle = Mathf.Atan2(
+				direction.X,
+				direction.Z
+			);
+
+			Rotation = new Vector3(
+				Rotation.X,
+				Mathf.LerpAngle(
+					Rotation.Y,
+					targetAngle,
+					RotationSpeed * (float)delta
+				),
+				Rotation.Z
+			);
+		}
 
 		Vector3 velocity = Velocity;
 
@@ -53,6 +91,7 @@ public partial class PlayerController : CharacterBody3D
 		}
 
 		Velocity = velocity;
+
 		MoveAndSlide();
 
 		if (GlobalPosition.Y < RespawnHeight)

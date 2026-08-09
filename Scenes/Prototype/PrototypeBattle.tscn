@@ -2,9 +2,14 @@
 
 [ext_resource type="Script" uid="uid://dodlfj5bsxvxc" path="res://Scripts/Characters/PlayerController.cs" id="1_r4fwg"]
 [ext_resource type="Script" uid="uid://0lngorlxdjia" path="res://Scripts/Camera/CameraFollow.cs" id="2_dk8uc"]
+[ext_resource type="Script" uid="uid://mea8uj4m6m8g" path="res://Scripts/Characters/CompanionFollower.cs" id="2_mm2fh"]
+[ext_resource type="Script" uid="uid://mp71ujxsqt3j" path="res://Scripts/Characters/PartyTrail.cs" id="3_e3pjo"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_ssidi"]
 size = Vector3(20, 0.2, 20)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3d320"]
+albedo_color = Color(1, 1, 0.5764706, 1)
 
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_dk8uc"]
 points = PackedVector3Array(10.154754, 0.37619048, 10.154754, -10.154754, -0.2587301, -10.154754, -10.154754, 0.37619048, -10.154754, 10.154754, -0.2587301, -10.154754, -10.154754, -0.2587301, 10.154754, -10.154754, 0.37619048, 10.154754, 10.154754, 0.37619048, -10.154754, 10.154754, -0.2587301, 10.154754)
@@ -13,25 +18,32 @@ points = PackedVector3Array(10.154754, 0.37619048, 10.154754, -10.154754, -0.258
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_4d8j6"]
 
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_sq1fu"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_4d8j6"]
+
 [node name="PrototypeBattle" type="Node3D" unique_id=1025150886]
 
 [node name="Environment" type="Node3D" parent="." unique_id=1741507704]
 
 [node name="Floor" type="MeshInstance3D" parent="Environment" unique_id=468730529]
 mesh = SubResource("BoxMesh_ssidi")
+surface_material_override/0 = SubResource("StandardMaterial3D_3d320")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Environment/Floor" unique_id=114562820]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Floor/StaticBody3D" unique_id=107223436]
 shape = SubResource("ConvexPolygonShape3D_dk8uc")
+debug_color = Color(0, 0.5627448, 0.87765753, 0.41960785)
 
 [node name="CombatGrid" type="Node3D" parent="." unique_id=1333217491]
 
 [node name="Units" type="Node3D" parent="." unique_id=991638500]
 
-[node name="Player" type="CharacterBody3D" parent="Units" unique_id=1316872888]
+[node name="Player" type="CharacterBody3D" parent="Units" unique_id=1316872888 node_paths=PackedStringArray("Camera")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 script = ExtResource("1_r4fwg")
+Camera = NodePath("../../CameraRig/PitchPivot/Camera3D")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Units/Player" unique_id=562123578]
 shape = SubResource("CapsuleShape3D_ssidi")
@@ -39,11 +51,28 @@ shape = SubResource("CapsuleShape3D_ssidi")
 [node name="Visual" type="MeshInstance3D" parent="Units/Player" unique_id=1003538979]
 mesh = SubResource("CapsuleMesh_4d8j6")
 
+[node name="Companion1" type="CharacterBody3D" parent="Units" unique_id=1054377 node_paths=PackedStringArray("Trail")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1, 0)
+script = ExtResource("2_mm2fh")
+Trail = NodePath("../PartyTrail")
+
+[node name="Visual" type="MeshInstance3D" parent="Units/Companion1" unique_id=818476235]
+mesh = SubResource("CapsuleMesh_sq1fu")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Units/Companion1" unique_id=463585970]
+shape = SubResource("CapsuleShape3D_4d8j6")
+
+[node name="PartyTrail" type="Node3D" parent="Units" unique_id=1189109159 node_paths=PackedStringArray("Leader")]
+script = ExtResource("3_e3pjo")
+Leader = NodePath("../Player")
+
 [node name="CameraRig" type="Node3D" parent="." unique_id=860780632 node_paths=PackedStringArray("Target")]
 script = ExtResource("2_dk8uc")
 Target = NodePath("../Units/Player")
 
-[node name="Camera3D" type="Camera3D" parent="CameraRig" unique_id=1537850604]
+[node name="PitchPivot" type="Node3D" parent="CameraRig" unique_id=1901321486]
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig/PitchPivot" unique_id=1537850604]
 transform = Transform3D(0.99991435, 0.007869309, -0.010459746, 0, 0.7991007, 0.6011972, 0.013089397, -0.6011457, 0.7990323, -0.5537709, 6.936759, 6.20823)
 current = true
 
