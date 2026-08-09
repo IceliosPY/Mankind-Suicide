@@ -1,0 +1,50 @@
+[gd_scene format=3 uid="uid://cnpsg6udmvt3y"]
+
+[ext_resource type="Script" uid="uid://dodlfj5bsxvxc" path="res://Scripts/Characters/PlayerController.cs" id="1_r4fwg"]
+[ext_resource type="Script" uid="uid://0lngorlxdjia" path="res://Scripts/Camera/CameraFollow.cs" id="2_dk8uc"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_ssidi"]
+size = Vector3(20, 0.2, 20)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_dk8uc"]
+points = PackedVector3Array(10.154754, 0.37619048, 10.154754, -10.154754, -0.2587301, -10.154754, -10.154754, 0.37619048, -10.154754, 10.154754, -0.2587301, -10.154754, -10.154754, -0.2587301, 10.154754, -10.154754, 0.37619048, 10.154754, 10.154754, 0.37619048, -10.154754, 10.154754, -0.2587301, 10.154754)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ssidi"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_4d8j6"]
+
+[node name="PrototypeBattle" type="Node3D" unique_id=1025150886]
+
+[node name="Environment" type="Node3D" parent="." unique_id=1741507704]
+
+[node name="Floor" type="MeshInstance3D" parent="Environment" unique_id=468730529]
+mesh = SubResource("BoxMesh_ssidi")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Environment/Floor" unique_id=114562820]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Floor/StaticBody3D" unique_id=107223436]
+shape = SubResource("ConvexPolygonShape3D_dk8uc")
+
+[node name="CombatGrid" type="Node3D" parent="." unique_id=1333217491]
+
+[node name="Units" type="Node3D" parent="." unique_id=991638500]
+
+[node name="Player" type="CharacterBody3D" parent="Units" unique_id=1316872888]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+script = ExtResource("1_r4fwg")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Units/Player" unique_id=562123578]
+shape = SubResource("CapsuleShape3D_ssidi")
+
+[node name="Visual" type="MeshInstance3D" parent="Units/Player" unique_id=1003538979]
+mesh = SubResource("CapsuleMesh_4d8j6")
+
+[node name="CameraRig" type="Node3D" parent="." unique_id=860780632 node_paths=PackedStringArray("Target")]
+script = ExtResource("2_dk8uc")
+Target = NodePath("../Units/Player")
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig" unique_id=1537850604]
+transform = Transform3D(0.99991435, 0.007869309, -0.010459746, 0, 0.7991007, 0.6011972, 0.013089397, -0.6011457, 0.7990323, -0.5537709, 6.936759, 6.20823)
+current = true
+
+[node name="DirectionalLight3D" type="Node3D" parent="." unique_id=367693525]
